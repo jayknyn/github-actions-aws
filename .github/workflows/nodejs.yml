@@ -1,0 +1,21 @@
+name: NodeJS JK Test
+on: [push]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - name: Use Node.js
+        uses: actions/setup-node@v1
+        with:
+          node-version: '8.x'
+          registry-url: 'https://registry.npmjs.org'
+      # - name: Setup private JFrog NPM repository
+      #   run: |
+      #     npm config set _auth ${{ secrets.NPM_TOKEN }}
+      #     npm config set registry https://rbcplatform.jfrog.io/rbcplatform/api/npm/npm-virtual
+      #     npm config set always-auth true
+      - name: Install NPM packages
+        run: yarn
+      - name: Build file
+        run: yarn build
