@@ -1,0 +1,28 @@
+{
+  "name": "github-actions-aws",
+  "version": "1.0.0",
+  "description": "poc for github actions to aws",
+  "main": "index.js",
+  "repository": "https://github.com/jayknyn/github-actions-aws.git",
+  "author": "Jay Kannaiyan <jay.kannaiyan@hotschedules.com>",
+  "license": "MIT",
+  "scripts": {
+    "start": "nodemon ./server.js",
+    "build": "webpack --watch -d"
+  },
+  "dependencies": {
+    "express": "^4.16.3",
+    "nodemon": "^1.18.10",
+    "path": "^0.12.7",
+    "react": "^0.14.7",
+    "react-dom": "^0.14.7",
+    "webpack": "^4.29.6",
+    "webpack-cli": "^3.3.0"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.4.0",
+    "@babel/preset-env": "^7.4.1",
+    "@babel/preset-react": "^7.0.0",
+    "babel-loader": "^8.0.5"
+  }
+}
