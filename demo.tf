@@ -5,14 +5,14 @@ provider "aws" {
 
 terraform {
   backend "s3" {
-    bucket = "[jk-remote-state]"
-    key    = "[jk-demo-app]"
+    bucket = "jk-remote-state"
+    key    = "jk-demo-app"
     region = "us-east-1"
   }
 }
 
 resource "aws_s3_bucket" "s3Bucket" {
-  bucket = "[jk-remote-state]"
+  bucket = "jk-remote-state"
   acl    = "public-read"
 
   policy = <<EOF
@@ -25,7 +25,7 @@ resource "aws_s3_bucket" "s3Bucket" {
         "s3:GetObject"
       ],
       "Effect": "Allow",
-      "Resource": "arn:aws:s3:::[jk-remote-state]/*",
+      "Resource": "arn:aws:s3:::jk-remote-state/*",
       "Principal": "*"
     }
   ]
