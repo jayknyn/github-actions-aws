@@ -20,45 +20,26 @@ resource "aws_s3_bucket" "b" {
     enabled = true
   }
 
+  policy = <<EOF
+  {
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "PublicReadGetObject",
+            "Effect": "Allow",
+            "Principal": "*",
+            "Action": [
+                "s3:GetObject"
+            ],
+            "Resource": [
+                "arn:aws:s3:::example-bucket/*"
+            ]
+        }
+    ]
+}
+EOF
+
   website {
     index_document = "index.html"
   }
 }
-
-# resource "aws_s3_bucket" "v" {
-#   bucket = "jk-demo-bucket2"
-#   acl    = "public-read"
-
-#   # versioning {
-#   #   enabled = true
-#   # }
-
-#   #   policy = <<EOF
-#   # {
-#   #   "Id": "MakePublic",
-#   #   "Version": "2012-10-17",
-#   #   "Statement": [
-#   #     {
-#   #       "Action": [
-#   #         "s3:GetObject"
-#   #       ],
-#   #       "Effect": "Allow",
-#   #       "Resource": "arn:aws:s3:::jk-remote-state/*",
-#   #       "Principal": "*"
-#   #     }
-#   #   ]
-#   # }
-#   # EOF
-
-#   website {
-#     index_document = "index.html"
-#   }
-# }
-
-# resource "aws_instance" "jkdemo" {
-#   ami           = "ami-062f7200baf2fa504"
-#   instance_type = "t2.micro"
-#   tags = {
-#     Name = "jkdemo2"
-#   }
-# }
