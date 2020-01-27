@@ -20,7 +20,7 @@ resource "aws_s3_bucket" "b" {
     enabled = true
   }
 
-  policy = <<EOF
+  policy = <<POLICY
   {
     "Version": "2012-10-17",
     "Statement": [
@@ -37,7 +37,7 @@ resource "aws_s3_bucket" "b" {
         }
     ]
 }
-EOF
+POLICY
 
   website {
     index_document = "index.html"
