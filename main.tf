@@ -20,11 +20,6 @@ resource "aws_s3_bucket" "b" {
     enabled = true
   }
 
-  tags = {
-    Name        = "My bucket"
-    Environment = "Dev"
-  }
-
   website {
     index_document = "index.html"
   }
