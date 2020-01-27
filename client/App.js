@@ -8,7 +8,7 @@ class App extends React.Component {
   render() {
     return (
       <div>
-        <p>React is running!</p>
+        <p>HotSchedules is running!</p>
       </div>
     );
   }
