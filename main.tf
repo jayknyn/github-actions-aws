@@ -32,7 +32,7 @@ resource "aws_s3_bucket" "b" {
                 "s3:GetObject"
             ],
             "Resource": [
-                "arn:aws:s3:::example-bucket/*"
+                "arn:aws:s3:::jibhi-test-bucket/*"
             ]
         }
     ]
