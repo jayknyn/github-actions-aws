@@ -20,6 +20,8 @@ resource "aws_s3_bucket" "b" {
     enabled = true
   }
 
+  policy = "${file("policy.json")}"
+
   #   policy = <<EOF
   #   {
   #   "Id": "Policy1580150172903",
