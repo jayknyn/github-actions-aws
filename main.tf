@@ -22,24 +22,6 @@ resource "aws_s3_bucket" "b" {
 
   policy = "${file("policy.json")}"
 
-  #   policy = <<EOF
-  #   {
-  #   "Id": "Policy1580150172903",
-  #   "Version": "2012-10-17",
-  #   "Statement": [
-  #     {
-  #       "Sid": "Stmt1580150156614",
-  #       "Action": [
-  #         "s3:GetObject"
-  #       ],
-  #       "Effect": "Allow",
-  #       "Resource": "arn:aws:s3:::jibhi-test-bucket/*",
-  #       "Principal": "*"
-  #     }
-  #   ]
-  # }
-  # EOF
-
   website {
     index_document = "index.html"
   }
