@@ -7,5 +7,4 @@ app.listen(3000, (err, res) => {
     console.log('Server running in aisle 3000');
   }
 });
-// app.use(express.json({ urlencoded: true }));
 app.use(express.static('dist'));
