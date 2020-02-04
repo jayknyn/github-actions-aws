@@ -8,7 +8,7 @@ class App extends React.Component {
   render() {
     return (
       <div>
-        <h3>HotSchedules is running! 200204-1145</h3>
+        <h3>HotSchedules is running! 200204-1430</h3>
       </div>
     );
   }
