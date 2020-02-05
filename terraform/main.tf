@@ -8,7 +8,7 @@ terraform {
   backend "s3" {
     bucket = "jk-remote-state"
     key    = "terraform-state"
-    region = "${var.region}"
+    region = "${var.aws_region}"
   }
 }
 
