@@ -1,7 +1,7 @@
 
 provider "aws" {
   version = "~> 2.0"
-  region  = "us-east-1"
+  region  = var.region
 }
 
 terraform {
@@ -18,6 +18,10 @@ resource "aws_s3_bucket" "b" {
 
   versioning {
     enabled = true
+  }
+
+  tags = {
+    Name = "JK S3 Test Bucket"
   }
 
   policy = "${file("policy.json")}"
