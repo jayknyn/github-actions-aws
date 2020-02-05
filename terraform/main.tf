@@ -1,19 +1,19 @@
 
 provider "aws" {
   version = "~> 2.0"
-  region  = var.region
+  region  = "${var.region}"
 }
 
 terraform {
   backend "s3" {
     bucket = "jk-remote-state"
     key    = "terraform-state"
-    region = "us-east-1"
+    region = "${var.region}"
   }
 }
 
 resource "aws_s3_bucket" "b" {
-  bucket = "jibhi-test-bucket"
+  bucket = "${var.bucket_name}"
   acl    = "public-read"
 
   versioning {
