@@ -1,9 +1,9 @@
 region = "us-east-1"
 
-namespace = "jktest"
+# namespace = "jktest"
 
-stage = "test"
+# stage = "test"
 
-name = "cloudfront-s3-cdn"
+# name = "cloudfront-s3-cdn"
 
-parent_zone_name = "*"
+# parent_zone_name = "*"
