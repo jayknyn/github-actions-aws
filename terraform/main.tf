@@ -56,7 +56,7 @@ resource "aws_route53_record" "s3-origin" {
   type = "A"
 
   alias {
-    name = aws_s3_bucket.b.website_domain
+    name = aws_s3_bucket.b.website_endpoint
     zone_id = aws_s3_bucket.b.hosted_zone_id
     evaluate_target_health = false
   }
@@ -70,7 +70,7 @@ resource "aws_cloudfront_distribution" "jk-distribution" {
   origin {
     # domain_name = "jibhi-test-bucket.s3-website-us-east-1.amazonaws.com"
     # domain_name = aws_s3_bucket.b.website_endpoint
-    domain_name = aws_s3_bucket.b.bucket_domain_name
+    domain_name = aws_s3_bucket.b.bucket_regional_domain_name
     origin_id = "jk-s3-origin-id"
     s3_origin_config {
       origin_access_identity = aws_cloudfront_origin_access_identity.origin_access_identity.cloudfront_access_identity_path
@@ -101,7 +101,8 @@ resource "aws_cloudfront_distribution" "jk-distribution" {
   }
   
   viewer_certificate {
-    cloudfront_default_certificate = true
+    # cloudfront_default_certificate = true
+    acm_certificate_arn = "arn:aws:acm:us-east-1:153027161823:certificate/7b4e67b8-b054-4ced-bd2d-36cf81dc6ea1"
   }
 
   restrictions {
