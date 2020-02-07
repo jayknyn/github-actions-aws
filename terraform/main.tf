@@ -29,38 +29,18 @@ resource "aws_s3_bucket" "b" {
     index_document = "index.html"
   }
 }
+ 
+# resource "aws_route53_record" "s3-origin" {
+#   zone_id = "Z2CCAX42E3UPIK"
+#   name = "jk-s3-origin"
+#   type = "A"
 
-# data "terraform_remote_state" "state"  {
-#   backend = "s3"
-#   config {
-#     bucket = "${var.tf_state_bucket}"
-#     key    = "terraform-state"
-#     region = "${var.region}"
+#   alias {
+#     name = aws_s3_bucket.b.website_endpoint
+#     zone_id = aws_s3_bucket.b.hosted_zone_id
+#     evaluate_target_health = false
 #   }
 # }
-
-# resource "aws_route53_zone" "fourth-sandbox" {
-#   name = "fourth-sandbox.com"
-# }
-
-# data "aws_route53_zone" "fourth-sandbox" {
-#   zone_id = Z2CCAX42E3UPIK
-#   # name = "fourth-sandbox.com."
-#   # private_zone = true
-# }
- 
-resource "aws_route53_record" "s3-origin" {
-  zone_id = "Z2CCAX42E3UPIK"
-  # zone_id = data.aws_route53_zone.fourth-sandbox.zone_id
-  name = "jk-s3-origin"
-  type = "A"
-
-  alias {
-    name = aws_s3_bucket.b.website_endpoint
-    zone_id = aws_s3_bucket.b.hosted_zone_id
-    evaluate_target_health = false
-  }
-}
 
 resource "aws_cloudfront_origin_access_identity" "origin_access_identity" {
   comment = "Some comment"
@@ -68,9 +48,8 @@ resource "aws_cloudfront_origin_access_identity" "origin_access_identity" {
 
 resource "aws_cloudfront_distribution" "jk-distribution" {
   origin {
-    # domain_name = "jibhi-test-bucket.s3-website-us-east-1.amazonaws.com"
-    # domain_name = aws_s3_bucket.b.website_endpoint
-    domain_name = aws_s3_bucket.b.bucket_regional_domain_name
+    # domain_name = aws_s3_bucket.b.bucket_regional_domain_name
+    domain_name = aws_s3_bucket.b.website_endpoint
     origin_id = "jk-s3-origin-id"
     s3_origin_config {
       origin_access_identity = aws_cloudfront_origin_access_identity.origin_access_identity.cloudfront_access_identity_path
@@ -80,7 +59,7 @@ resource "aws_cloudfront_distribution" "jk-distribution" {
   enabled = true
   default_root_object = "index.html"
 
-  aliases = ["jk-test.fourth-sandbox.com"]
+  # aliases = ["jk-test.fourth-sandbox.com"]
   price_class = "PriceClass_200"
   retain_on_delete = true
   
@@ -101,9 +80,9 @@ resource "aws_cloudfront_distribution" "jk-distribution" {
   }
   
   viewer_certificate {
-    # cloudfront_default_certificate = true
-    acm_certificate_arn = "arn:aws:acm:us-east-1:153027161823:certificate/7b4e67b8-b054-4ced-bd2d-36cf81dc6ea1"
-    ssl_support_method = "sni-only"
+    cloudfront_default_certificate = true
+    # acm_certificate_arn = "arn:aws:acm:us-east-1:153027161823:certificate/7b4e67b8-b054-4ced-bd2d-36cf81dc6ea1"
+    # ssl_support_method = "sni-only"
   }
 
   restrictions {
