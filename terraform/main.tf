@@ -29,18 +29,6 @@ resource "aws_s3_bucket" "b" {
     index_document = "index.html"
   }
 }
- 
-# resource "aws_route53_record" "s3-origin" {
-#   zone_id = "Z2CCAX42E3UPIK"
-#   name = "jk-s3-origin"
-#   type = "A"
-
-#   alias {
-#     name = aws_s3_bucket.b.website_endpoint
-#     zone_id = aws_s3_bucket.b.hosted_zone_id
-#     evaluate_target_health = false
-#   }
-# }
 
 resource "aws_cloudfront_origin_access_identity" "origin_access_identity" {
   comment = "Some comment"
@@ -48,8 +36,7 @@ resource "aws_cloudfront_origin_access_identity" "origin_access_identity" {
 
 resource "aws_cloudfront_distribution" "jk-distribution" {
   origin {
-    # domain_name = aws_s3_bucket.b.bucket_regional_domain_name
-    domain_name = aws_s3_bucket.b.website_endpoint
+    domain_name = aws_s3_bucket.b.bucket_regional_domain_name
     origin_id = "jk-s3-origin-id"
     s3_origin_config {
       origin_access_identity = aws_cloudfront_origin_access_identity.origin_access_identity.cloudfront_access_identity_path
@@ -59,7 +46,6 @@ resource "aws_cloudfront_distribution" "jk-distribution" {
   enabled = true
   default_root_object = "index.html"
 
-  # aliases = ["jk-test.fourth-sandbox.com"]
   price_class = "PriceClass_200"
   retain_on_delete = true
   
@@ -68,7 +54,7 @@ resource "aws_cloudfront_distribution" "jk-distribution" {
     cached_methods = [ "GET", "HEAD" ]
     target_origin_id = "jk-s3-origin-id"
     forwarded_values {
-      query_string = true
+      query_string = false
       cookies {
         forward = "none"
       }
