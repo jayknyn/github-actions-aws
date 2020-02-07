@@ -6,7 +6,7 @@
       "Sid": "Stmt1580150156614",
       "Action": ["s3:GetObject"],
       "Effect": "Allow",
-      "Resource": "arn:aws:s3:::${var.bucket_name}/*",
+      "Resource": "arn:aws:s3:::jibhi-test-bucket/*",
       "Principal": "*"
     }
   ]
