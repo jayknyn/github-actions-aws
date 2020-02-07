@@ -68,7 +68,9 @@ resource "aws_cloudfront_origin_access_identity" "origin_access_identity" {
 
 resource "aws_cloudfront_distribution" "jk-distribution" {
   origin {
-    domain_name = "jibhi-test-bucket.s3-website-us-east-1.amazonaws.com"
+    # domain_name = "jibhi-test-bucket.s3-website-us-east-1.amazonaws.com"
+    # domain_name = aws_s3_bucket.b.website_endpoint
+    domain_name = aws_s3_bucket.b.bucket_domain_name
     origin_id = "jk-s3-origin-id"
     s3_origin_config {
       origin_access_identity = aws_cloudfront_origin_access_identity.origin_access_identity.cloudfront_access_identity_path
