@@ -103,6 +103,7 @@ resource "aws_cloudfront_distribution" "jk-distribution" {
   viewer_certificate {
     # cloudfront_default_certificate = true
     acm_certificate_arn = "arn:aws:acm:us-east-1:153027161823:certificate/7b4e67b8-b054-4ced-bd2d-36cf81dc6ea1"
+    ssl_support_method = "sni-only"
   }
 
   restrictions {
