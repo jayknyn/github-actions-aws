@@ -52,13 +52,11 @@ resource "aws_lambda_permission" "allow_s3_invoke" {
   function_name = aws_lambda_function.jk-lambda-s3-v4.arn
   principal = "s3.amazonaws.com"
   source_arn = aws_s3_bucket.b.arn
-  # source_arn = "arn:aws:s3:::jibhi-test-bucket"
 }
 
 resource "aws_lambda_function" "jk-lambda-s3-v4" {
   function_name = "jk-lambda-s3-v4"
-  # s3_bucket = aws_s3_bucket.b.arn
-  # s3_key    = "index.html"
+  description = "Trigger CloudFront invalidation on S3 bucket update"
   handler = "s3-bucket-cf-invalidation.handler"
   runtime = "nodejs12.x"
   filename = "lambda-s3-cf.zip"
@@ -96,7 +94,7 @@ resource "aws_cloudfront_distribution" "jk-distribution" {
   price_class = "PriceClass_200"
   retain_on_delete = true
 
-  aliases = ["jk1.fourth-sandbox.com"]
+  aliases = ["jk3.fourth-sandbox.com"]
   
   default_cache_behavior {
     allowed_methods = [ "DELETE", "GET", "HEAD", "OPTIONS", "PATCH", "POST", "PUT" ]
@@ -115,7 +113,6 @@ resource "aws_cloudfront_distribution" "jk-distribution" {
   }
   
   viewer_certificate {
-    # cloudfront_default_certificate = true
     acm_certificate_arn = "arn:aws:acm:us-east-1:153027161823:certificate/7b4e67b8-b054-4ced-bd2d-36cf81dc6ea1"
     ssl_support_method = "sni-only"
   }
@@ -127,15 +124,17 @@ resource "aws_cloudfront_distribution" "jk-distribution" {
   }
 }
 
-# resource "aws_route53_record" "cname-cloudfront" {
-#   zone_id = "Z2CCAX42E3UPIK"
-#   # zone_id = data.aws_route53_zone.fourth-sandbox.zone_id
-#   name = "jk2"
-#   type = "CNAME"
+data "aws_route53_zone" "fourth-sandbox" {
+  name  = "fourth-sandbox.com"
+}
 
-#   alias {
-#     name = aws_cloudfront_distribution.jk-distribution.name?
-#     zone_id = aws_cloudfront_distribution.jk-distribution.hosted_zone_id?
-#     evaluate_target_health = false
-#   }
-# }
+resource "aws_route53_record" "jk3" {
+  zone_id = data.aws_route53_zone.fourth-sandbox.zone_id
+  name = "jk3"
+  type = "CNAME"
+  alias {
+    name = aws_cloudfront_distribution.jk-distribution.domain_name
+    zone_id = aws_cloudfront_distribution.jk-distribution.hosted_zone_id
+    evaluate_target_health = false
+  }
+}
