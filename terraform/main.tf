@@ -48,7 +48,7 @@ data "archive_file" "lambda-s3-cf" {
 
 resource "aws_lambda_function" "jk-lambda-s3-v4" {
   function_name = "jk-lambda-s3-v4"
-  s3_bucket = "arn:aws:s3:::jibhi-test-bucket"
+  s3_bucket = aws_s3_bucket.b.arn
   s3_key    = "index.html"
   handler = "s3-bucket-cf-invalidation.handler"
   runtime = "nodejs12.x"
