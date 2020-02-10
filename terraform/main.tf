@@ -52,8 +52,16 @@ resource "aws_lambda_function" "jk-lambda-s3-v4" {
   runtime = "nodejs12.x"
   filename = "lambda-s3-cf.zip"
   source_code_hash = filebase64sha256("lambda-s3-cf.zip")
-  # role = aws_iam_role.jk-lambda-s3-cloudfront-v3.arn
   role = "arn:aws:iam::153027161823:role/jk-lambda-s3-cloudfront2"
+}
+
+resource "aws_lambda_permission" "test" {
+  statement_id  = "AllowS3Invoke"
+  action        = "lambda:InvokeFunction"
+  function_name = aws_lambda_function.jk-lambda-s3-v4.arn
+  principal = "s3.amazonaws.com"
+  source_arn = "arn:aws:s3:::jibhi-test-bucket"
+  # source_arn = aws_s3_bucket.b.arn
 }
 
 resource "aws_cloudfront_origin_access_identity" "origin_access_identity" {
