@@ -5,10 +5,15 @@ provider "aws" {
 
 terraform {
   backend "s3" {
-    bucket = "jk-remote-state"
+    # bucket = "jk-tf-remote-state-from-local"
+    bucket = "jk-tf-remote-state-from-actions"
     key = "terraform-state"
     region = "us-east-1"
   }
+}
+
+locals {
+  s3_origin_id = "jk-s3-id"
 }
 
 resource "aws_s3_bucket" "b" {
@@ -30,29 +35,53 @@ resource "aws_s3_bucket" "b" {
   }
 }
 
+data "archive_file" "lambda-s3-cf" {
+  type = "zip"
+  source_dir = "../lambda/"
+  output_path = "./lambda-s3-cf.zip"
+}
+
+# resource "aws_iam_role" "jk-lambda-s3-cloudfront-v3" {
+#   name = "jk-lambda-s3-cloudfront-v3"
+#   policy = file("lambdapolicy.json")
+# }
+
+resource "aws_lambda_function" "jk-lambda-s3-v4" {
+  function_name = "jk-lambda-s3-v4"
+  handler = "s3-bucket-cf-invalidation.handler"
+  runtime = "nodejs12.x"
+  filename = "lambda-s3-cf.zip"
+  source_code_hash = filebase64sha256("lambda-s3-cf.zip")
+  # role = aws_iam_role.jk-lambda-s3-cloudfront-v3.arn
+  role = "arn:aws:iam::153027161823:role/jk-lambda-s3-cloudfront2"
+}
+
 resource "aws_cloudfront_origin_access_identity" "origin_access_identity" {
-  comment = "Some comment"
+  comment = "via terraform"
 }
 
 resource "aws_cloudfront_distribution" "jk-distribution" {
   origin {
     domain_name = aws_s3_bucket.b.bucket_regional_domain_name
-    origin_id = "jk-s3-origin-id"
+    origin_id = local.s3_origin_id
     s3_origin_config {
       origin_access_identity = aws_cloudfront_origin_access_identity.origin_access_identity.cloudfront_access_identity_path
     }
   }
 
   enabled = true
+  comment = "via terraform"
   default_root_object = "index.html"
 
   price_class = "PriceClass_200"
   retain_on_delete = true
+
+  aliases = ["jk1.fourth-sandbox.com"]
   
   default_cache_behavior {
     allowed_methods = [ "DELETE", "GET", "HEAD", "OPTIONS", "PATCH", "POST", "PUT" ]
     cached_methods = [ "GET", "HEAD" ]
-    target_origin_id = "jk-s3-origin-id"
+    target_origin_id = local.s3_origin_id
     forwarded_values {
       query_string = false
       cookies {
@@ -66,9 +95,9 @@ resource "aws_cloudfront_distribution" "jk-distribution" {
   }
   
   viewer_certificate {
-    cloudfront_default_certificate = true
-    # acm_certificate_arn = "arn:aws:acm:us-east-1:153027161823:certificate/7b4e67b8-b054-4ced-bd2d-36cf81dc6ea1"
-    # ssl_support_method = "sni-only"
+    # cloudfront_default_certificate = true
+    acm_certificate_arn = "arn:aws:acm:us-east-1:153027161823:certificate/7b4e67b8-b054-4ced-bd2d-36cf81dc6ea1"
+    ssl_support_method = "sni-only"
   }
 
   restrictions {

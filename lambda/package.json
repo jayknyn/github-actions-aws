@@ -1,0 +1,20 @@
+{
+  "name": "aws-LambdaS3CloudFront-Invalidations",
+  "version": "0.0.0",
+  "description": "Tiggers a parametrised invalidation for the distribution that uses a S3 bucket as a origin for the object that has been updated",
+  "main": "s3-bucket-cf-invalidation.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "AWS",
+    "Require",
+    "CloudFront",
+    "S3"
+  ],
+  "author": "30MHz.com",
+  "dependencies": {
+    "aws-sdk": "^2.1.21",
+    "q": "^1.2.0"
+  }
+}
