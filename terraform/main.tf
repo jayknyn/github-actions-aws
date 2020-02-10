@@ -46,10 +46,19 @@ data "archive_file" "lambda-s3-cf" {
 #   policy = file("lambdapolicy.json")
 # }
 
+resource "aws_lambda_permission" "allow_s3_invoke" {
+  statement_id  = "AllowS3Invoke"
+  action        = "lambda:InvokeFunction"
+  function_name = aws_lambda_function.jk-lambda-s3-v4.arn
+  principal = "s3.amazonaws.com"
+  source_arn = aws_s3_bucket.b.arn
+  # source_arn = "arn:aws:s3:::jibhi-test-bucket"
+}
+
 resource "aws_lambda_function" "jk-lambda-s3-v4" {
   function_name = "jk-lambda-s3-v4"
-  s3_bucket = aws_s3_bucket.b.arn
-  s3_key    = "index.html"
+  # s3_bucket = aws_s3_bucket.b.arn
+  # s3_key    = "index.html"
   handler = "s3-bucket-cf-invalidation.handler"
   runtime = "nodejs12.x"
   filename = "lambda-s3-cf.zip"
@@ -57,13 +66,14 @@ resource "aws_lambda_function" "jk-lambda-s3-v4" {
   role = "arn:aws:iam::153027161823:role/jk-lambda-s3-cloudfront2"
 }
 
-resource "aws_lambda_permission" "test" {
-  statement_id  = "AllowS3Invoke"
-  action        = "lambda:InvokeFunction"
-  function_name = aws_lambda_function.jk-lambda-s3-v4.arn
-  principal = "s3.amazonaws.com"
-  source_arn = "arn:aws:s3:::jibhi-test-bucket"
-  # source_arn = aws_s3_bucket.b.arn
+resource "aws_s3_bucket_notification" "bucket_notification" {
+  bucket = aws_s3_bucket.b.id
+
+  lambda_function {
+    lambda_function_arn = aws_lambda_function.jk-lambda-s3-v4.arn
+    events              = ["s3:ObjectCreated:*"]
+    filter_suffix       = ".html"
+  }
 }
 
 resource "aws_cloudfront_origin_access_identity" "origin_access_identity" {
