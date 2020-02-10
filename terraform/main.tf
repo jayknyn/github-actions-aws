@@ -48,6 +48,8 @@ data "archive_file" "lambda-s3-cf" {
 
 resource "aws_lambda_function" "jk-lambda-s3-v4" {
   function_name = "jk-lambda-s3-v4"
+  s3_bucket = "arn:aws:s3:::jibhi-test-bucket"
+  s3_key    = "index.html"
   handler = "s3-bucket-cf-invalidation.handler"
   runtime = "nodejs12.x"
   filename = "lambda-s3-cf.zip"
@@ -114,3 +116,16 @@ resource "aws_cloudfront_distribution" "jk-distribution" {
     }
   }
 }
+
+# resource "aws_route53_record" "cname-cloudfront" {
+#   zone_id = "Z2CCAX42E3UPIK"
+#   # zone_id = data.aws_route53_zone.fourth-sandbox.zone_id
+#   name = "jk2"
+#   type = "CNAME"
+
+#   alias {
+#     name = aws_cloudfront_distribution.jk-distribution.name?
+#     zone_id = aws_cloudfront_distribution.jk-distribution.hosted_zone_id?
+#     evaluate_target_health = false
+#   }
+# }
