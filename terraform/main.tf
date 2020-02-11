@@ -94,7 +94,7 @@ resource "aws_cloudfront_distribution" "jk-distribution" {
   price_class = "PriceClass_200"
   retain_on_delete = true
 
-  aliases = ["jk3.fourth-sandbox.com"]
+  aliases = ["jk5.fourth-sandbox.com"]
   
   default_cache_behavior {
     allowed_methods = [ "DELETE", "GET", "HEAD", "OPTIONS", "PATCH", "POST", "PUT" ]
@@ -130,8 +130,8 @@ data "aws_route53_zone" "fourth-sandbox" {
 
 resource "aws_route53_record" "jk3" {
   zone_id = data.aws_route53_zone.fourth-sandbox.zone_id
-  name = "jk3"
-  type = "CNAME"
+  name = "jk5"
+  type = "A"
   alias {
     name = aws_cloudfront_distribution.jk-distribution.domain_name
     zone_id = aws_cloudfront_distribution.jk-distribution.hosted_zone_id
