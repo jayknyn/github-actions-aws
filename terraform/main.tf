@@ -59,6 +59,7 @@ resource "aws_lambda_permission" "allow_s3_invoke" {
 }
 
 resource "aws_lambda_function" "jk-lambda-s3-v4" {
+  depends_on = [data.archive_file.lambda-s3-cf]
   function_name = "jk-lambda-s3-v4"
   description = "Trigger CloudFront invalidation on S3 bucket update"
   handler = "s3-bucket-cf-invalidation.handler"
