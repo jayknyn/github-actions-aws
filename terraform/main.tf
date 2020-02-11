@@ -38,7 +38,7 @@ resource "aws_s3_bucket" "b" {
 data "archive_file" "lambda-s3-cf" {
   type = "zip"
   source_dir = "../lambda/"
-  output_path = "./lambda-s3-cf.zip"
+  output_path = "../lambda/lambda-s3-cf.zip"
 }
 
 # resource "aws_iam_role" "jk-lambda-s3-cloudfront-v3" {

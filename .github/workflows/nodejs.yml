@@ -41,33 +41,21 @@ jobs:
         run: yarn build
 
       - name: Terraform Init
-        uses: hashicorp/terraform-github-actions@master
-        with:
-          tf_actions_version: 0.12.19
-          tf_actions_subcommand: 'init'
-          tf_actions_working_dir: './terraform'
+        uses: hashicorp/terraform-github-actions/init@v0.4.0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          # TF_ACTION_WORKING_DIR: './terraform'
+          TF_ACTION_WORKING_DIR: './terraform'
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
       - name: Terraform Validate
-        uses: hashicorp/terraform-github-actions@master
-        with:
-          tf_actions_version: 0.12.19
-          tf_actions_subcommand: 'validate'
-          tf_actions_working_dir: './terraform'
+        uses: hashicorp/terraform-github-actions/validate@v0.3.7
 
       - name: Terraform Apply
-        uses: hashicorp/terraform-github-actions@master
-        with:
-          tf_actions_version: 0.12.19
-          tf_actions_subcommand: 'apply'
-          tf_actions_working_dir: './terraform'
+        uses: hashicorp/terraform-github-actions/apply@v0.4.0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          # TF_ACTION_WORKING_DIR: './terraform'
+          TF_ACTION_WORKING_DIR: './terraform'
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 

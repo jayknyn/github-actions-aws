@@ -1,0 +1,81 @@
+name: NodeJS JK Test
+
+on: [push]
+
+jobs:
+  build:
+    name: Build & Deploy Site
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@master
+
+      - name: Use Node.js
+        uses: actions/setup-node@v1
+        with:
+          node-version: '8.x'
+
+      - name: Get yarn cache
+        id: yarn-cache
+        run: echo "::set-output name=dir::$(yarn cache dir)"
+
+      - uses: actions/cache@v1
+        with:
+          path: ${{ steps.yarn-cache.outputs.dir }}
+          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-
+
+      - name: Setup private JFrog NPM repository
+        run: |
+          npm config set _auth ${{ secrets.NPM_TOKEN }}
+          npm config set registry https://rbcplatform.jfrog.io/rbcplatform/api/npm/npm-virtual
+          npm config set always-auth true
+          npm config list | grep 'registry'
+
+      - name: Install NPM packages
+        run: yarn
+
+      - name: Build App
+        run: yarn build
+
+      - name: Terraform Init
+        uses: hashicorp/terraform-github-actions@master
+        with:
+          tf_actions_version: 0.12.19
+          tf_actions_subcommand: 'init'
+          tf_actions_working_dir: './terraform'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # TF_ACTION_WORKING_DIR: './terraform'
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
+      - name: Terraform Validate
+        uses: hashicorp/terraform-github-actions@master
+        with:
+          tf_actions_version: 0.12.19
+          tf_actions_subcommand: 'validate'
+          tf_actions_working_dir: './terraform'
+
+      - name: Terraform Apply
+        uses: hashicorp/terraform-github-actions@master
+        with:
+          tf_actions_version: 0.12.19
+          tf_actions_subcommand: 'apply'
+          tf_actions_working_dir: './terraform'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # TF_ACTION_WORKING_DIR: './terraform'
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
+      - name: Deploy to S3
+        uses: jakejarvis/s3-sync-action@master
+        env:
+          SOURCE_DIR: './dist'
+          AWS_REGION: 'us-east-1'
+          AWS_S3_BUCKET: 'jibhi-test-bucket'
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
