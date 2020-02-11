@@ -34,8 +34,11 @@ jobs:
           npm config set always-auth true
           npm config list | grep 'registry'
 
-      - name: Install NPM packages
+      - name: Install NPM packages for App
         run: yarn
+
+      - name: Install NPM packages for Lambda Function
+        run: yarn install-npm-lambda
 
       - name: Build App
         run: yarn build
