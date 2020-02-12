@@ -12,10 +12,6 @@ terraform {
   }
 }
 
-# locals {
-#   s3_origin_id = var.s3_origin_id
-# }
-
 resource "aws_s3_bucket" "b" {
   bucket = var.bucket_name
   acl    = "public-read"
@@ -44,7 +40,7 @@ data "aws_iam_role" "jk-lambda-s3-cloudfront2" {
   name = "jk-lambda-s3-cloudfront2"
 }
 
-data "archive_file" "lambda-s3-cf" {
+data "archive_file" "lambda-s3-cf-func" {
   type = "zip"
   source_dir = "../lambda/"
   output_path = "./lambda-s3-cf.zip"
@@ -59,15 +55,17 @@ resource "aws_lambda_permission" "allow_s3_invoke" {
 }
 
 resource "aws_lambda_function" "jk-lambda-s3-v4" {
-  depends_on = [data.archive_file.lambda-s3-cf]
+  filename = data.archive_file.lambda-s3-cf-func.output_path
+  source_code_hash = data.archive_file.lambda-s3-cf-func.output_base64sha256
   function_name = "jk-lambda-s3-v4"
   description = "Trigger CloudFront invalidation on S3 bucket update"
+  role = data.aws_iam_role.jk-lambda-s3-cloudfront2.arn
   handler = "s3-bucket-cf-invalidation.handler"
   runtime = "nodejs12.x"
-  filename = "lambda-s3-cf.zip"
-  source_code_hash = filebase64sha256("lambda-s3-cf.zip")
-  # role = "arn:aws:iam::153027161823:role/jk-lambda-s3-cloudfront2"
-  role = data.aws_iam_role.jk-lambda-s3-cloudfront2.arn
+  # timeout = "60"
+  # memory_size = "128"
+  # filename = "lambda-s3-cf.zip"
+  # source_code_hash = filebase64sha256("lambda-s3-cf.zip")
 }
 
 resource "aws_s3_bucket_notification" "bucket_notification" {
