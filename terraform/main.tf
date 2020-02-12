@@ -62,10 +62,8 @@ resource "aws_lambda_function" "jk-lambda-s3-v4" {
   role = data.aws_iam_role.jk-lambda-s3-cloudfront2.arn
   handler = "s3-bucket-cf-invalidation.handler"
   runtime = "nodejs12.x"
-  # timeout = "60"
-  # memory_size = "128"
-  # filename = "lambda-s3-cf.zip"
-  # source_code_hash = filebase64sha256("lambda-s3-cf.zip")
+  timeout = "60"
+  memory_size = "128"
 }
 
 resource "aws_s3_bucket_notification" "bucket_notification" {
