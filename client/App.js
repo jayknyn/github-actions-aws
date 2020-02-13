@@ -8,7 +8,7 @@ class App extends React.Component {
   render() {
     return (
       <div>
-        <h3>HotSchedules is running! Wednesday Feb 12, 2100 hrs</h3>
+        <h3>HotSchedules is running! Thursday Feb 13, 900 hrs</h3>
       </div>
     );
   }
