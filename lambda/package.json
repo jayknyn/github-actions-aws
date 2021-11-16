@@ -14,7 +14,7 @@
   ],
   "author": "30MHz.com",
   "dependencies": {
-    "aws-sdk": "^2.1.21",
+    "aws-sdk": "^2.814.0",
     "q": "^1.2.0"
   }
 }
